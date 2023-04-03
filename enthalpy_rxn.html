@@ -14597,10 +14597,11 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="PRUEBA-DE-JUPYTER">PRUEBA DE JUPYTER<a class="anchor-link" href="#PRUEBA-DE-JUPYTER">&#182;</a></h1><h2 id="Constante-de-equilibrio:-reaccion-quimica-(fase-gaseosa)">Constante de equilibrio: reaccion quimica (fase gaseosa)<a class="anchor-link" href="#Constante-de-equilibrio:-reaccion-quimica-(fase-gaseosa)">&#182;</a></h2><p><a href="/jupyter_prueba">Volver al Menu Principal</a></p>
-<p>A continuacion, se muestra la implementacion en Python de los modelos
-matematicos para calcular Keq en funcion de T para una reaccion quimica
-en fase gaseosa a presion estandar</p>
+<h1 id="TERMOQU%C3%8DMICA">TERMOQU&#205;MICA<a class="anchor-link" href="#TERMOQU%C3%8DMICA">&#182;</a></h1><h2 id="Entalp%C3%ADa-de-reacci%C3%B3n-y-constante-de-equilibrio">Entalp&#237;a de reacci&#243;n y constante de equilibrio<a class="anchor-link" href="#Entalp%C3%ADa-de-reacci%C3%B3n-y-constante-de-equilibrio">&#182;</a></h2><p><a href="/jupyter_prueba">Volver al Menu Principal</a></p>
+<p>En esta publicación, se muestra la obtención e implementación en Python de los modelos
+matemáticos para calcular la entalpía de reacción (Hrxn) y constante de equilibrio (K)
+en función de la temperatura (T).</p>
+<p>Caso de estudio: reaccion quimica en fase gaseosa a presion estandar</p>
 
 </div>
 </div>
@@ -14613,15 +14614,17 @@ en fase gaseosa a presion estandar</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[1]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#SymPy: Paquete de matemática simbólica</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
 <span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="n">collect</span><span class="p">,</span> <span class="n">integrate</span><span class="p">,</span> <span class="n">symbols</span><span class="p">,</span> <span class="n">simplify</span>
 <span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="n">Eq</span>
 
+<span class="c1">#Definiendo variables simbólicas</span>
 <span class="n">coeff</span> <span class="o">=</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">E</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;A:E&#39;</span><span class="p">,</span> <span class="n">real</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">T</span><span class="p">,</span> <span class="n">T0</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;T T0&#39;</span><span class="p">)</span>
 <span class="n">R</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="n">real</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">positive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">hR0</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;H^RXN_(T0)&#39;</span><span class="p">)</span>
-<span class="n">hR</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;H^RXN_(T)&#39;</span><span class="p">)</span>
+<span class="n">hR0</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;\Delta{H^</span><span class="si">{RXN}</span><span class="s1">_{(T0)}}&#39;</span><span class="p">)</span>
+<span class="n">hR</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;\Delta{H^</span><span class="si">{RXN}</span><span class="s1">_{(T)}}&#39;</span><span class="p">)</span>
 <span class="n">ln_K0</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;ln(K_{(T0)})&#39;</span><span class="p">)</span>
 <span class="n">I1</span><span class="p">,</span> <span class="n">I2</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;I1 I2&#39;</span><span class="p">)</span>
 <span class="n">Cp_R</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;Cp/R&#39;</span><span class="p">)</span>
@@ -14640,14 +14643,10 @@ en fase gaseosa a presion estandar</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Ideal Gas: Cp model as a temperature function</span>
-<span class="c1">#From Smith, van Ness and Abbott</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Modelo matemático para Cp de un gas ideal en función de temperatura</span>
+<span class="c1">#Fuente: Smith, van Ness &amp; Abbott: Termodinámica para Ingeniería Química</span>
 <span class="n">Cp_R_fsym</span> <span class="o">=</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="n">C</span><span class="o">*</span><span class="n">T</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">D</span><span class="o">*</span><span class="n">T</span><span class="o">**-</span><span class="mi">2</span>
 <span class="n">display</span><span class="p">(</span><span class="n">Eq</span><span class="p">(</span><span class="n">Cp_R</span><span class="p">,</span> <span class="n">Cp_R_fsym</span><span class="p">))</span>
-<span class="c1">#Integrating the Cp with respect to T</span>
-<span class="n">int_1</span> <span class="o">=</span> <span class="n">integrate</span><span class="p">(</span><span class="n">Cp_R_fsym</span><span class="p">,</span> <span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="n">T</span><span class="p">))</span>
-<span class="n">int_1</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">int_1</span><span class="p">,</span> <span class="n">coeff</span><span class="p">)</span>
-<span class="n">display</span><span class="p">(</span><span class="n">Eq</span><span class="p">(</span><span class="n">I1</span><span class="p">,</span> <span class="n">int_1</span><span class="p">))</span>
 </pre></div>
 
      </div>
@@ -14673,6 +14672,51 @@ $\displaystyle Cp/R = A + B T + C T^{2} + \frac{D}{T^{2}}$
 </div>
 
 </div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Como la reacción química ocurre en fase gaseosa, se puede aplicar la ecuación de Kirchoff para obtener la variación de la entalpía de reacción como función de la temperatura:</p>
+$$\Delta H^{RXN}_{(T)} - \Delta H^{RXN}_{(T_0)} = \int_{T_0}^T \mathrm{\Delta Cp_{(T)}}\, \mathrm{d}T$$<p>La siguiente integral, basada en el modelo de Cp/R, se define como I1:</p>
+$$I_1 = \int_{T_0}^T \mathrm{\frac{\Delta Cp_{(T)}}{R}}\, \mathrm{d}T$$<p>Sustituyendo en la ec. de Kirchoff:</p>
+$$\Delta H^{RXN}_{(T)} = \Delta H^{RXN}_{(T_0)} + R*I_1$$<p>En los siguientes pasos, se obtendrá y simplificará I1 para después llegar al modelo de Hrxn(T):</p>
+
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Integrando Cp respecto a T</span>
+<span class="n">int_1</span> <span class="o">=</span> <span class="n">integrate</span><span class="p">(</span><span class="n">Cp_R_fsym</span><span class="p">,</span> <span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="n">T</span><span class="p">))</span>
+<span class="n">int_1</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">int_1</span><span class="p">,</span> <span class="n">coeff</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">Eq</span><span class="p">(</span><span class="n">I1</span><span class="p">,</span> <span class="n">int_1</span><span class="p">))</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
@@ -14695,10 +14739,10 @@ $\displaystyle I_{1} = A \left(T - T_{0}\right) + B \left(\frac{T^{2}}{2} - \fra
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Simplifying the integral with an auxiliar E parameter</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Simplificando la integral I1 con un parámetro auxiliar E</span>
 <span class="n">E_fsym</span> <span class="o">=</span> <span class="n">A</span><span class="o">*</span><span class="n">T0</span> <span class="o">+</span> <span class="p">(</span><span class="n">B</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">T0</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">C</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">T0</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="n">D</span><span class="o">/</span><span class="n">T0</span>
 <span class="n">display</span><span class="p">(</span><span class="n">Eq</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">E_fsym</span><span class="p">))</span>
 <span class="n">int_1</span> <span class="o">=</span> <span class="n">int_1</span> <span class="o">+</span> <span class="n">E_fsym</span> <span class="o">-</span> <span class="n">E</span>
@@ -14751,10 +14795,10 @@ $\displaystyle I_{1} = A T + \frac{B T^{2}}{2} + \frac{C T^{3}}{3} - \frac{D}{T}
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Reaction heat as a temperature function</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Entalpía de reacción en función de la temperatura</span>
 <span class="n">hR_fsym</span> <span class="o">=</span> <span class="n">hR0</span> <span class="o">+</span> <span class="n">R</span><span class="o">*</span><span class="n">int_1</span>
 <span class="n">display</span><span class="p">(</span><span class="n">Eq</span><span class="p">(</span><span class="n">hR</span><span class="p">,</span> <span class="n">hR_fsym</span><span class="p">))</span>
 </pre></div>
@@ -14778,7 +14822,7 @@ $\displaystyle I_{1} = A T + \frac{B T^{2}}{2} + \frac{C T^{3}}{3} - \frac{D}{T}
 
 
 <div class="jp-RenderedLatex jp-OutputArea-output " data-mime-type="text/latex">
-$\displaystyle H^{RXN}_{(T)} = H^{RXN}_{(T0)} + R \left(A T + \frac{B T^{2}}{2} + \frac{C T^{3}}{3} - \frac{D}{T} - E\right)$
+$\displaystyle \Delta{H^{RXN}_{(T)}} = R \left(A T + \frac{B T^{2}}{2} + \frac{C T^{3}}{3} - \frac{D}{T} - E\right) + \Delta{H^{RXN}_{(T0)}}$
 </div>
 
 </div>
@@ -14787,24 +14831,40 @@ $\displaystyle H^{RXN}_{(T)} = H^{RXN}_{(T0)} + R \left(A T + \frac{B T^{2}}{2} 
 
 </div>
 
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>La ecuación diferencial de van't Hoff relaciona la constante termodinámica
+de equilibrio con la entalpía de la reacción y la temperatura, según se muestra
+a continuación:</p>
+$$\frac{\mathrm{d} \mathrm{ln} (K_{(T)})}{dT} = \frac{\Delta H^{RXN}_{(T)}}{RT^2}$$<p>Integrando ambos lados de la ecuación respecto a la temperatura: 
+$$\mathrm{ln} (K_{(T)}) - \mathrm{ln} (K_{(T_0)}) = \int_{T_0}^T \mathrm{\frac{\Delta H^{RXN}_{(T)}}{RT^2}}\, \mathrm{d}T$$</p>
+<p>Llamando I2 al lado derecho de la ecuación y reordenando, se obtiene:
+$$\mathrm{ln} (K_{(T)}) = \mathrm{ln} (K_{(T_0)}) + I_2$$</p>
+
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Integrating the van&#39;t Hoff equation for</span>
-<span class="c1">#equilibrium constant as a temperature function</span>
-<span class="n">int_2</span> <span class="o">=</span> <span class="n">integrate</span><span class="p">(</span><span class="o">-</span><span class="n">hR_fsym</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">T</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="n">T</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">int_2</span> <span class="o">=</span> <span class="n">integrate</span><span class="p">(</span><span class="n">hR_fsym</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">T</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="n">T</span><span class="p">))</span>
 <span class="n">int_2</span> <span class="o">=</span> <span class="n">simplify</span><span class="p">(</span><span class="n">int_2</span><span class="p">)</span>
-<span class="n">display</span><span class="p">(</span><span class="n">Eq</span><span class="p">(</span><span class="n">I2</span><span class="p">,</span> <span class="n">int_2</span><span class="p">))</span>
+<span class="c1">#display(Eq(I2, int_2))</span>
 <span class="n">int_2</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">int_2</span><span class="p">,</span> <span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">hR0</span><span class="p">))</span>
 <span class="n">display</span><span class="p">(</span><span class="n">Eq</span><span class="p">(</span><span class="n">I2</span><span class="p">,</span> <span class="n">int_2</span><span class="p">))</span>
 <span class="n">ln_K_fsym</span> <span class="o">=</span> <span class="n">ln_K0</span> <span class="o">+</span> <span class="n">int_2</span>
 <span class="n">ln_K</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;ln(K)&#39;</span><span class="p">)</span>
-<span class="n">display</span><span class="p">(</span><span class="n">Eq</span><span class="p">(</span><span class="n">ln_K</span><span class="p">,</span> <span class="n">ln_K_fsym</span><span class="p">))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">Eq</span><span class="p">(</span><span class="n">ln_K</span><span class="p">,</span> <span class="n">ln_K0</span> <span class="o">+</span> <span class="n">I2</span><span class="p">))</span>
 </pre></div>
 
      </div>
@@ -14826,7 +14886,7 @@ $\displaystyle H^{RXN}_{(T)} = H^{RXN}_{(T0)} + R \left(A T + \frac{B T^{2}}{2} 
 
 
 <div class="jp-RenderedLatex jp-OutputArea-output " data-mime-type="text/latex">
-$\displaystyle I_{2} = - A \log{\left(T \right)} + A \log{\left(T_{0} \right)} - \frac{B T}{2} + \frac{B T_{0}}{2} - \frac{C T^{2}}{6} + \frac{C T_{0}^{2}}{6} + \frac{D}{2 T_{0}^{2}} - \frac{D}{2 T^{2}} + \frac{E}{T_{0}} - \frac{E}{T} - \frac{H^{RXN}_{(T0)}}{R T_{0}} + \frac{H^{RXN}_{(T0)}}{R T}$
+$\displaystyle I_{2} = A \left(\log{\left(T \right)} - \log{\left(T_{0} \right)}\right) + B \left(\frac{T}{2} - \frac{T_{0}}{2}\right) + C \left(\frac{T^{2}}{6} - \frac{T_{0}^{2}}{6}\right) + D \left(- \frac{1}{2 T_{0}^{2}} + \frac{1}{2 T^{2}}\right) + E \left(- \frac{1}{T_{0}} + \frac{1}{T}\right) + \Delta{H^{RXN}_{(T0)}} \left(\frac{1}{R T_{0}} - \frac{1}{R T}\right)$
 </div>
 
 </div>
@@ -14838,19 +14898,7 @@ $\displaystyle I_{2} = - A \log{\left(T \right)} + A \log{\left(T_{0} \right)} -
 
 
 <div class="jp-RenderedLatex jp-OutputArea-output " data-mime-type="text/latex">
-$\displaystyle I_{2} = A \left(- \log{\left(T \right)} + \log{\left(T_{0} \right)}\right) + B \left(- \frac{T}{2} + \frac{T_{0}}{2}\right) + C \left(- \frac{T^{2}}{6} + \frac{T_{0}^{2}}{6}\right) + D \left(\frac{1}{2 T_{0}^{2}} - \frac{1}{2 T^{2}}\right) + E \left(\frac{1}{T_{0}} - \frac{1}{T}\right) + H^{RXN}_{(T0)} \left(- \frac{1}{R T_{0}} + \frac{1}{R T}\right)$
-</div>
-
-</div>
-<div class="jp-OutputArea-child">
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-
-<div class="jp-RenderedLatex jp-OutputArea-output " data-mime-type="text/latex">
-$\displaystyle ln(K) = A \left(- \log{\left(T \right)} + \log{\left(T_{0} \right)}\right) + B \left(- \frac{T}{2} + \frac{T_{0}}{2}\right) + C \left(- \frac{T^{2}}{6} + \frac{T_{0}^{2}}{6}\right) + D \left(\frac{1}{2 T_{0}^{2}} - \frac{1}{2 T^{2}}\right) + E \left(\frac{1}{T_{0}} - \frac{1}{T}\right) + H^{RXN}_{(T0)} \left(- \frac{1}{R T_{0}} + \frac{1}{R T}\right) + ln(K_{(T0)})$
+$\displaystyle ln(K) = I_{2} + ln(K_{(T0)})$
 </div>
 
 </div>
@@ -14864,13 +14912,11 @@ $\displaystyle ln(K) = A \left(- \log{\left(T \right)} + \log{\left(T_{0} \right
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">log</span>
-
-<span class="c1">#Example: N2O4 (g) &lt;---&gt; 2 NO2 (g)</span>
-<span class="c1">#Numerical values</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Ejemplo: N2O4 (g) &lt;---&gt; 2 NO2 (g)</span>
+<span class="c1">#Valores numéricos</span>
 <span class="n">a_NO2</span><span class="p">,</span> <span class="n">b_NO2</span><span class="p">,</span> <span class="n">c_NO2</span><span class="p">,</span> <span class="n">d_NO2</span> <span class="o">=</span> <span class="mf">4.982</span><span class="p">,</span> <span class="mf">1.195</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.792</span>
 <span class="n">a_N2O4</span><span class="p">,</span> <span class="n">b_N2O4</span><span class="p">,</span> <span class="n">c_N2O4</span><span class="p">,</span> <span class="n">d_N2O4</span> <span class="o">=</span> <span class="mf">11.660</span><span class="p">,</span> <span class="mf">2.257</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.787</span>
 <span class="n">a</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">a_NO2</span> <span class="o">-</span> <span class="n">a_N2O4</span>
@@ -14878,7 +14924,7 @@ $\displaystyle ln(K) = A \left(- \log{\left(T \right)} + \log{\left(T_{0} \right
 <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">c_NO2</span> <span class="o">-</span> <span class="n">c_N2O4</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span><span class="o">**-</span><span class="mi">6</span>
 <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">d_NO2</span> <span class="o">-</span> <span class="n">d_N2O4</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="mi">5</span>
 
-<span class="n">ln_K0_val</span> <span class="o">=</span> <span class="n">log</span><span class="p">(</span><span class="mf">5.908e-3</span><span class="p">)</span>
+<span class="n">ln_K0_val</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0494</span>
 <span class="n">hR0_val</span> <span class="o">=</span> <span class="mf">57.20e+3</span> <span class="c1">#J/mol</span>
 <span class="n">R_gas</span> <span class="o">=</span> <span class="mf">8.3143</span> <span class="c1">#J/(mol.K)</span>
 
@@ -14919,7 +14965,7 @@ $\displaystyle ln(K) = A \left(- \log{\left(T \right)} + \log{\left(T_{0} \right
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="n">lambdify</span>
@@ -14927,10 +14973,9 @@ $\displaystyle ln(K) = A \left(- \log{\left(T \right)} + \log{\left(T_{0} \right
 <span class="c1">#Reaction heat: variable</span>
 <span class="n">E_func</span> <span class="o">=</span> <span class="n">lambdify</span><span class="p">([</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">T0</span><span class="p">],</span> <span class="n">E_fsym</span><span class="p">,</span> <span class="s2">&quot;math&quot;</span><span class="p">)</span>
 <span class="n">e</span> <span class="o">=</span> <span class="n">E_func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">R_gas</span><span class="p">,</span> <span class="n">T_ref</span><span class="p">)</span>
-<span class="n">ln_K_func</span> <span class="o">=</span> <span class="n">lambdify</span><span class="p">([</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">hR0</span><span class="p">,</span> <span class="n">ln_K0</span><span class="p">],</span> <span class="n">ln_K_fsym</span><span class="p">,</span> <span class="s2">&quot;math&quot;</span><span class="p">)</span>
-<span class="n">ln_K1</span> <span class="o">=</span> <span class="n">ln_K_func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">R_gas</span><span class="p">,</span> <span class="n">T_ref</span><span class="p">,</span> <span class="n">T1</span><span class="p">,</span> <span class="n">hR0_val</span><span class="p">,</span> <span class="n">ln_K0_val</span><span class="p">)</span>
-<span class="n">K1</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">ln_K1</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">K1</span><span class="p">)</span>
+<span class="n">hR_func</span> <span class="o">=</span> <span class="n">lambdify</span><span class="p">([</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">hR0</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="n">T</span><span class="p">],</span> <span class="n">hR_fsym</span><span class="p">,</span> <span class="s2">&quot;math&quot;</span><span class="p">)</span>
+<span class="n">hR1</span> <span class="o">=</span> <span class="n">hR_func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">R_gas</span><span class="p">,</span> <span class="n">hR0_val</span><span class="p">,</span> <span class="n">T_ref</span><span class="p">,</span> <span class="n">T1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">hR1</span><span class="w"> </span><span class="si">= :</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> J/mol&#39;</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14950,7 +14995,7 @@ $\displaystyle ln(K) = A \left(- \log{\left(T \right)} + \log{\left(T_{0} \right
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>1.833484457851146e-05
+<pre>hR1 = 56670.97 J/mol
 </pre>
 </div>
 </div>
@@ -14964,13 +15009,15 @@ $\displaystyle ln(K) = A \left(- \log{\left(T \right)} + \log{\left(T_{0} \right
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Reaction heat: constant</span>
-<span class="n">ln_K1</span> <span class="o">=</span> <span class="n">ln_K_func</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">R_gas</span><span class="p">,</span> <span class="n">T_ref</span><span class="p">,</span> <span class="n">T1</span><span class="p">,</span> <span class="n">hR0_val</span><span class="p">,</span> <span class="n">ln_K0_val</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">exp</span>
+
+<span class="n">ln_K_func</span> <span class="o">=</span> <span class="n">lambdify</span><span class="p">([</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">hR0</span><span class="p">,</span> <span class="n">ln_K0</span><span class="p">],</span> <span class="n">ln_K_fsym</span><span class="p">,</span> <span class="s2">&quot;math&quot;</span><span class="p">)</span>
+<span class="n">ln_K1</span> <span class="o">=</span> <span class="n">ln_K_func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">R_gas</span><span class="p">,</span> <span class="n">T_ref</span><span class="p">,</span> <span class="n">T1</span><span class="p">,</span> <span class="n">hR0_val</span><span class="p">,</span> <span class="n">ln_K0_val</span><span class="p">)</span>
 <span class="n">K1</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">ln_K1</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">K1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">K1</span><span class="w"> </span><span class="si">= :</span><span class="s1">.3e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14990,7 +15037,47 @@ $\displaystyle ln(K) = A \left(- \log{\left(T \right)} + \log{\left(T_{0} \right
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>1.7967970332627178e-05
+<pre>K1 = 4.151e+01
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Reaction heat: constant</span>
+<span class="n">ln_K1</span> <span class="o">=</span> <span class="n">ln_K_func</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">R_gas</span><span class="p">,</span> <span class="n">T_ref</span><span class="p">,</span> <span class="n">T1</span><span class="p">,</span> <span class="n">hR0_val</span><span class="p">,</span> <span class="n">ln_K0_val</span><span class="p">)</span>
+<span class="n">K1</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">ln_K1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">K1</span><span class="w"> </span><span class="si">= :</span><span class="s1">.3e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>K1 = 4.235e+01
 </pre>
 </div>
 </div>
